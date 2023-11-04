@@ -35,7 +35,7 @@ jobs:
         run: |
           poetry add pyspark
           poetry add taskipy
-          poetry add pandas
+          poetry add pandas@1.5
           poetry add numpy
           poetry add numpy
           poetry add pyarrow
