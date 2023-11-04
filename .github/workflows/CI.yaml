@@ -19,7 +19,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openjdk-8-jre
           java -version
-          
+
       - name: Check Java HOME
         run: |
           echo $JAVA_HOME
@@ -45,6 +45,9 @@ jobs:
           export SPARK_LOCAL_IP=127.0.0.1
           export SPARK_HOME=$SPARK_HOME
           export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH
-          
+      
+      - name: Check DIR
+        run: ls
+
       - name: Run Pytest with PySpark
         run: poetry run pytest
