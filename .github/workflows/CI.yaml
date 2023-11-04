@@ -35,6 +35,8 @@ jobs:
         run: |
           poetry add pyspark
           poetry add taskipy
+          poetry add pandas
+          poetry add numpy
 
       - name: Install dependencies with poetry
         run: poetry install
