@@ -37,6 +37,8 @@ jobs:
           poetry add taskipy
           poetry add pandas
           poetry add numpy
+          poetry add numpy
+          poetry add pyarrow
 
       - name: Install dependencies with poetry
         run: poetry install
@@ -48,6 +50,8 @@ jobs:
           export SPARK_LOCAL_IP=127.0.0.1
           export SPARK_HOME=$SPARK_HOME
           export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH
+          echo $SPARK_HOME
+          poetry run pytest
           
-      - name: Run Pytest with PySpark
-        run: poetry run pytest
+      # - name: Run Pytest with PySpark
+      #   run: poetry run pytest
