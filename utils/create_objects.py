@@ -4,7 +4,6 @@ from pyspark.sql import SparkSession
 def get_spark_object(environment, app_name):
     """
     Create a SparkSession object for a given environment and application name.
-
     This function creates a SparkSession object based on the specified environment and application name.
 
     Args:
