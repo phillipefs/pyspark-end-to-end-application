@@ -20,6 +20,10 @@ jobs:
           sudo apt-get install -y openjdk-8-jre
           java -version
           
+      - name: Check Java HOME
+        run: |
+          echo $JAVA_HOME
+          
       - name: Set up Spark and Hadoop
         run: |
           wget -q https://archive.apache.org/dist/spark/spark-3.2.4/spark-3.2.4-bin-hadoop3.2.tgz
@@ -31,15 +35,6 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
 
-      - name: Update pyproject.toml
-        run: |
-          poetry add pyspark
-          poetry add taskipy
-          poetry add pandas@1.5
-          poetry add numpy
-          poetry add numpy
-          poetry add pyarrow
-
       - name: Install dependencies with poetry
         run: poetry install
 
@@ -50,8 +45,6 @@ jobs:
           export SPARK_LOCAL_IP=127.0.0.1
           export SPARK_HOME=$SPARK_HOME
           export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH
-          echo $SPARK_HOME
-          poetry run pytest
           
-      # - name: Run Pytest with PySpark
-      #   run: poetry run pytest
+      - name: Run Pytest with PySpark
+        run: poetry run pytest
