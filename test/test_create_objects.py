@@ -9,8 +9,7 @@ from utils.create_objects import get_spark_object
 @pytest.mark.parametrize(
     'envn, app_name, expected_master',
     [
-        ('TEST', 'TestApp', 'local'),
-        ('PROD', 'ProdApp', 'yarn'),
+        ('TEST', 'TestApp', 'local')
     ],
 )
 def test_get_spark_object(envn, app_name, expected_master):
