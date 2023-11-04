@@ -1,6 +1,6 @@
 name: CI Workflow
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   test:
@@ -17,7 +17,7 @@ jobs:
       - name: Configure Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '8'
           distribution: temurin
 
       - name: Configure SPARK
