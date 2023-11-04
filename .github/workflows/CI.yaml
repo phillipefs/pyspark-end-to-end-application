@@ -21,7 +21,7 @@ jobs:
           distribution: temurin
 
       - name: Configure SPARK
-      - uses: vemonet/setup-spark@v1
+        uses: vemonet/setup-spark@v1
         with:
           spark-version: '3.4.1'
           hadoop-version: '3'
