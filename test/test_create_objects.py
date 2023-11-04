@@ -1,7 +1,7 @@
 import sys
 import pytest
 from os.path import dirname, join, abspath
-sys.path.insert(0, abspath(join(dirname(__file__), '..')))
+#sys.path.insert(0, abspath(join(dirname(__file__), '..')))
 
 
 from utils.create_objects import get_spark_object
