@@ -1,6 +1,6 @@
 name: CI Workflow
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -9,28 +9,26 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.11
+      - name: Set up Python 3.11.5
         uses: actions/setup-python@v2
         with:
           python-version: 3.11.5
 
-      - name: Install Java 8
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-8-jre
-          java -version
+      - name: Configure Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: temurin
 
-      - name: Check Java HOME
-        run: |
-          echo $JAVA_HOME
-          
-      - name: Set up Spark and Hadoop
-        run: |
-          wget -q https://archive.apache.org/dist/spark/spark-3.2.4/spark-3.2.4-bin-hadoop3.2.tgz
-          tar xzf spark-3.2.4-bin-hadoop3.2.tgz
-          export SPARK_HOME=$PWD/spark-3.2.4-bin-hadoop3.2
-          export PATH=$SPARK_HOME/bin:$PATH
-          
+      - name: Configure SPARK
+      - uses: vemonet/setup-spark@v1
+        with:
+          spark-version: '3.4.1'
+          hadoop-version: '3'
+
+      - name: Check Spark Version
+        run: spark-submit --version
+
       - name: Install poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
@@ -38,16 +36,5 @@ jobs:
       - name: Install dependencies with poetry
         run: poetry install
 
-      - name: Set PySpark environment variables
-        run: |
-          export PYSPARK_PYTHON=python
-          export PYSPARK_DRIVER_PYTHON=python
-          export SPARK_LOCAL_IP=127.0.0.1
-          export SPARK_HOME=$SPARK_HOME
-          export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH
-      
-      - name: Check DIR
-        run: ls
-
-      - name: Run Pytest with PySpark
+      - name: Run pytest
         run: poetry run pytest
