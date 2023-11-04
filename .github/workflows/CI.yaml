@@ -9,11 +9,24 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.11.5
+      - name: Set up Python 3.11
         uses: actions/setup-python@v2
         with:
-          python-version: 3.11.5
+          python-version: 3.11
 
+      - name: Install Java 8
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-8-jre
+          java -version
+          
+      - name: Set up Spark and Hadoop
+        run: |
+          wget -q https://downloads.apache.org/spark/spark-3.1.2/spark-3.1.2-bin-hadoop3.2.tgz
+          tar xf spark-3.1.2-bin-hadoop3.2.tgz
+          export SPARK_HOME=$PWD/spark-3.1.2-bin-hadoop3.2
+          export PATH=$SPARK_HOME/bin:$PATH
+          
       - name: Install poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
@@ -21,5 +34,13 @@ jobs:
       - name: Install dependencies with poetry
         run: poetry install
 
-      - name: Run pytest
+      - name: Set PySpark environment variables
+        run: |
+          export PYSPARK_PYTHON=python
+          export PYSPARK_DRIVER_PYTHON=python
+          export SPARK_LOCAL_IP=127.0.0.1
+          export SPARK_HOME=$SPARK_HOME
+          export PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.9-src.zip:$PYTHONPATH
+          
+      - name: Run Pytest with PySpark
         run: poetry run pytest
