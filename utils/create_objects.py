@@ -5,7 +5,8 @@ from pyspark.sql import SparkSession
 
 #Load the Logging Configuration File
 logging.config.fileConfig(fname= "configs/logging_to_file.conf")
-logger = logging.getLogger(__name__.split(".")[-1])
+logger = logging.getLogger("create_objects")
+
 
 def get_spark_object(environment, app_name):
     """

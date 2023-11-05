@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 
 #Load the Logging Configuration File
 logging.config.fileConfig(fname= "configs/logging_to_file.conf")
-logger = logging.getLogger(__name__.split(".")[-1])
+logger = logging.getLogger("validations")
 
 def get_curr_date(spark: SparkSession) -> None:
     """
