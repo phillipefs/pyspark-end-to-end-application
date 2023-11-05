@@ -1,4 +1,5 @@
 #!/bin/bash
+#sudo service ssh start
 
 echo "Start YARN..."
 start-yarn.sh
