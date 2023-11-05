@@ -36,11 +36,5 @@ jobs:
       - name: Install dependencies with poetry
         run: poetry install
 
-      - name: Run PWD
-        run: pwd
-
-      - name: LisFiles
-        run: ls
-
       - name: Run pytest
         run: poetry run pytest
