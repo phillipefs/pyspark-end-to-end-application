@@ -28,3 +28,4 @@ def get_curr_date(spark: SparkSession) -> None:
         raise
     else:
         logger.info("Spark object is validated. Spark Object is ready.")
+        print("Spark object is validated. Spark Object is ready.")

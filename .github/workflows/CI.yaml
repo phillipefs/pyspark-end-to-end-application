@@ -9,10 +9,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.11.5
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: 3.11.5
+          python-version: 3.8.10
 
       - name: Configure Java
         uses: actions/setup-java@v3
@@ -23,7 +23,7 @@ jobs:
       - name: Configure SPARK
         uses: vemonet/setup-spark@v1
         with:
-          spark-version: '3.4.1'
+          spark-version: '3.3.0'
           hadoop-version: '3'
 
       - name: Check Spark Version

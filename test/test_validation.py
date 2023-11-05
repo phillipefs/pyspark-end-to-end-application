@@ -24,4 +24,3 @@ def test_get_curr_date(spark_session, capsys):
     expected = 'Spark object is validated. Spark Object is ready.\n'
 
     assert expected in capture_msg_print.out
-
