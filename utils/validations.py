@@ -13,7 +13,7 @@ def get_curr_date(spark: SparkSession) -> None:
     """
     try:
         df = spark.sql("""SELECT current_date""")
-        print("Validate the Spark object by printing Current Date - " + str(df.collect()))
+        print("Validate the Spark object by printing Current Date - " + str(df.collect()[0][0]))
     except NameError as exp:
         print("NameError in the method - get_curr_date(). Please check the Stack Trace. " + str(exp))
         raise
@@ -22,7 +22,6 @@ def get_curr_date(spark: SparkSession) -> None:
         raise
     else:
         print("Spark object is validated. Spark Object is ready.")
-        return df.collect()
 
 
 

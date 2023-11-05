@@ -16,9 +16,12 @@ def spark_session():
     )
     return spark
 
-def test_get_curr_date(spark_session):
+def test_get_curr_date(spark_session, capsys):
 
     spark = spark_session
-    df_collect = get_curr_date(spark)
-    assert isinstance(df_collect, list)
+    get_curr_date(spark)
+    capture_msg_print = capsys.readouterr()
+    expected = 'Spark object is validated. Spark Object is ready.\n'
+
+    assert expected in capture_msg_print.out
 
