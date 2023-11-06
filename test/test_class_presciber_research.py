@@ -20,7 +20,7 @@ def prescriber_reseach_class():
 
 def test_get_spark_object(prescriber_reseach_class, app_name, expected_master):
     pipeline = prescriber_reseach_class
-    spark = pipeline._spark_session()
+    spark = pipeline.spark_session()
     assert spark.conf.get('spark.master') == expected_master
     assert spark.conf.get('spark.app.name') == app_name
     spark.stop()
@@ -29,7 +29,7 @@ def test_get_spark_object(prescriber_reseach_class, app_name, expected_master):
 def test_validate_spark_session(prescriber_reseach_class):
     expected = "Spark object is validated. Spark Object is ready."
     pipeline = prescriber_reseach_class
-    result = pipeline._validade_spark_session()
+    result = pipeline.validade_spark_session()
 
     assert result == expected
 
@@ -54,7 +54,7 @@ def test_validate_spark_session(prescriber_reseach_class):
 def test_load_file_to_dataframe(prescriber_reseach_class, file_dir, file_format, header, inferSchema):
     pipeline = prescriber_reseach_class
 
-    df = pipeline._read_file_to_dataframe(
+    df = pipeline.read_file_to_dataframe(
         file_dir=file_dir,
         file_format=file_format,
         header=header,
