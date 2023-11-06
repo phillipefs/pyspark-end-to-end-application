@@ -2,9 +2,8 @@ import sys
 import os
 import logging.config
 import utils.get_all_variables as var_project
-from utils.create_objects import get_spark_object
-from utils.validations import get_curr_date
-from utils.run_data_ingest import load_files
+import utils.prescriber_reseach as PrescriberResearch
+
 
 #Load the Logging Configuration File
 logging.config.fileConfig(fname= "configs/logging_to_file.conf")
