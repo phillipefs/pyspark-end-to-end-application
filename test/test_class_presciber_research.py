@@ -31,7 +31,7 @@ def schema_city():
 @pytest.fixture
 def schema_fact():
     schema_fact = StructType([
-        StructField('presc_id', IntegerType(), True),
+        StructField('presc_id', StringType(), True),
         StructField('presc_lname', StringType(), True),
         StructField('presc_fname', StringType(), True),
         StructField('presc_city', StringType(), True),
@@ -39,9 +39,9 @@ def schema_fact():
         StructField('presc_spclt', StringType(), True),
         StructField('years_of_exp', StringType(), True),
         StructField('drug_name', StringType(), True),
-        StructField('trx_cnt', IntegerType(), True),
-        StructField('total_day_supply', IntegerType(), True),
-        StructField('total_drug_cost', DoubleType(), True),
+        StructField('trx_cnt', StringType(), True),
+        StructField('total_day_supply', StringType(), True),
+        StructField('total_drug_cost', StringType(), True),
         StructField('country_name', StringType(), False)
     ])
     return schema_fact
@@ -67,7 +67,7 @@ def test_validate_spark_session(prescriber_reseach_class):
     'file_dir, file_format, header, inferSchema',
     [
         (
-            "file:///" + var_project.staging_fact + '/' + 'USA_Presc_Medicare_Data_12021.csv',
+            "file:///" + var_project.staging_fact + '/' + 'USA_Presc_Medicare_Data.csv',
             'csv',
             var_project.header,
             var_project.infer_schema
@@ -98,10 +98,6 @@ def test_data_clean(prescriber_reseach_class, schema_city, schema_fact):
 
     df_city = pipeline.create_df_city()
     df_fact = pipeline.create_df_fact()
-
-    print("*********************************")
-    print(df_fact.columns)
-    print("*********************************")
 
     df_city_clean, df_fact_clean = pipeline.data_clean(df_city, df_fact)
 
