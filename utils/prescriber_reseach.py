@@ -176,17 +176,14 @@ class PrescriberResearch:
                 col("total_day_supply"),
                 col("total_drug_cost")
             )
-     
+
             df_fact_clean = df_fact_clean.withColumn("country_name",lit("USA"))
 
         except Exception as exp:
             logger.error("Error in the method - create_df_fact(). Please check the Stack Trace. " + str(exp))
             raise
 
-        return df_city_clean, df_fact_clean
-
-        
-    
+        return df_city_clean, df_fact_clean   
 
     def start_pipeline(self):
         try:

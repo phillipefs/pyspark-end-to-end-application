@@ -12,8 +12,3 @@ if __name__ == "__main__":
     logging.info("***** Pipeline is Started... *****")
     prescribe_research = PrescriberResearch(environment= var_project.envn, app_name= var_project.app_name )
     prescribe_research.start_pipeline()
-
-
-
-
-    
