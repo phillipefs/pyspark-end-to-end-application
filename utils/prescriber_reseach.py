@@ -4,6 +4,7 @@ import os
 from os.path import dirname, join, abspath
 import sys
 from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql.functions import *
 
 #Import Module Variables
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
@@ -93,29 +94,102 @@ class PrescriberResearch:
                     options(inferSchema=inferSchema). \
                     load(file_dir)
         except Exception as exp:
-            logger.error("Error in the method - load_files(). Please check the Stack Trace. " + str(exp))
+            logger.error("Error in the method - read_file_to_dataframe(). Please check the Stack Trace. " + str(exp))
             raise
         else:
-            logger.info(f"The input File {file_dir} is loaded to the data frame. The load_files() Function is completed.")
+            logger.info(f"The input File {file_dir} is loaded to the data frame. The read_file_to_dataframe() Function is completed.")
         return df
     
     def create_df_city(self):
-        for file in os.listdir(var_project.staging_dim_city):
-            path_file = "file://" + var_project.staging_dim_city + '/' + file
+        try:
+            logger.info("Creating Dataframe City")
+            for file in os.listdir(var_project.staging_dim_city):
+                path_file = "file://" + var_project.staging_dim_city + '/' + file
 
-            if file.split('.')[-1] == 'csv':
-                file_format = 'csv'
-                header = var_project.header
-                infer_schema = var_project.infer_schema
-            elif file.split('.')[-1] == 'parquet':
-                file_format = 'parquet'
-                header = 'NA'
-                infer_schema = 'NA'
+                if file.split('.')[-1] == 'csv':
+                    file_format = 'csv'
+                    header = var_project.header
+                    infer_schema = var_project.infer_schema
+                elif file.split('.')[-1] == 'parquet':
+                    file_format = 'parquet'
+                    header = 'NA'
+                    infer_schema = 'NA'
 
-        df_city = self.read_file_to_dataframe(file_dir=path_file, file_format = file_format, 
-                             header= header, inferSchema=infer_schema)
+            df_city = self.read_file_to_dataframe(file_dir=path_file, file_format = file_format, 
+                                header= header, inferSchema=infer_schema)            
+           
+        except Exception as exp:
+            logger.error("Error in the method - create_df_city(). Please check the Stack Trace. " + str(exp))
+            raise
         
+        logger.info(f"Dataframe City - CountRows: {df_city.count()}")
         return df_city
+    
+    def create_df_fact(self):
+        try:
+            logger.info("Creating Dataframe Fact")
+            for file in os.listdir(var_project.staging_fact):
+                path_file = "file://" + var_project.staging_fact + '/' + file
+
+                if file.split('.')[-1] == 'csv':
+                    file_format = 'csv'
+                    header = var_project.header
+                    infer_schema = var_project.infer_schema
+                elif file.split('.')[-1] == 'parquet':
+                    file_format = 'parquet'
+                    header = 'NA'
+                    infer_schema = 'NA'
+
+            df_fact = self.read_file_to_dataframe(file_dir=path_file, file_format = file_format, 
+                                header= header, inferSchema=infer_schema)            
+           
+        except Exception as exp:
+            logger.error("Error in the method - create_df_fact(). Please check the Stack Trace. " + str(exp))
+            raise
+        
+        logger.info(f"Dataframe Fact - CountRows: {df_fact.count()}")
+        return df_fact
+    
+    def data_clean(self, df_city: DataFrame, df_fact: DataFrame)-> DataFrame:
+        try:
+            logger.info("data_clean() is started for df_city dataframe...")
+            df_city_clean = df_city.select(
+                upper(col("city").alias("city")),
+                col("state_id"),
+                upper(col("state_name").alias("state_name")),
+                upper(col("county_name").alias("county_name")),
+                col("population"),
+                col("zips")
+            )
+
+            logger.info("data_clean() is started for df_fact dataframe...")
+            df_fact_clean = df_fact.select(
+                col("npi").alias("presc_id"),
+                col("nppes_provider_last_org_name").alias("presc_lname"),
+                col("nppes_provider_first_name").alias("presc_fname"),
+                col("nppes_provider_city").alias("presc_city"),
+                col("nppes_provider_state").alias("presc_state"),
+                col("specialty_description").alias("presc_spclt"),
+                col("years_of_exp"),
+                col("drug_name"),
+                col("total_claim_count").alias("trx_cnt"),
+                col("total_day_supply"),
+                col("total_drug_cost")
+            )
+     
+            df_fact_clean = df_fact_clean.withColumn("country_name",lit("USA"))
+
+            print(df_city_clean.schema)
+            print(df_fact_clean.schema)
+
+
+        except Exception as exp:
+            logger.error("Error in the method - create_df_fact(). Please check the Stack Trace. " + str(exp))
+            raise
+
+        return df_city_clean, df_fact_clean
+
+        
     
 
     def start_pipeline(self):
@@ -129,9 +203,15 @@ class PrescriberResearch:
             #Load City File
             df_city = process.create_df_city()
 
-            df_city.show()
+            #Load City File
+            df_fact = process.create_df_fact()
 
-            logging.info("app_start_pipeline.py is Completed.")
+            #Clean Dataframes
+            df_city, df_fact = process.data_clean(df_city , df_fact)
+
+           
+
+            logging.info("start_pipeline() is Completed.")
 
         except Exception as error:
             logging.error("Error ocorred in the main() method." + str(error), exc_info=True)
