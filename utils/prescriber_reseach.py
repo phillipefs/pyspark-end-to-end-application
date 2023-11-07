@@ -5,6 +5,7 @@ from os.path import dirname, join, abspath
 import sys
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import *
+from pyspark.sql.window import Window
 
 #Import Module Variables
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
@@ -177,7 +178,16 @@ class PrescriberResearch:
                 col("total_drug_cost")
             )
 
-            df_fact_clean = df_fact_clean.withColumn("country_name",lit("USA"))
+            spec = Window.partitionBy("presc_id")
+            df_fact_clean = df_fact_clean\
+                .withColumn("country_name",lit("USA"))\
+                .withColumn("years_of_exp", regexp_extract(col("years_of_exp"), r'\d+', 0).cast("int"))\
+                .withColumn("presc_fullname", concat_ws(" ", col("presc_fname"), col("presc_lname")))\
+                .drop("presc_lname", "presc_fname")\
+                .dropna(subset=["presc_id", "drug_name"])\
+                .withColumn("trx_cnt", coalesce("trx_cnt", avg("trx_cnt").over(spec)))
+            
+            df_fact_clean.show(truncate=False)
 
         except Exception as exp:
             logger.error("Error in the method - data_clean(). Please check the Stack Trace. " + str(exp))
@@ -201,6 +211,7 @@ class PrescriberResearch:
 
             #Clean Dataframes
             df_city, df_fact = process.data_clean(df_city , df_fact)
+
 
             logging.info("start_pipeline() is Completed.")
 
