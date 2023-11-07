@@ -32,17 +32,16 @@ def schema_city():
 def schema_fact():
     schema_fact = StructType([
         StructField('presc_id', StringType(), True),
-        StructField('presc_lname', StringType(), True),
-        StructField('presc_fname', StringType(), True),
         StructField('presc_city', StringType(), True),
         StructField('presc_state', StringType(), True),
         StructField('presc_spclt', StringType(), True),
-        StructField('years_of_exp', StringType(), True),
+        StructField('years_of_exp', IntegerType(), True),
         StructField('drug_name', StringType(), True),
         StructField('trx_cnt', StringType(), True),
         StructField('total_day_supply', StringType(), True),
         StructField('total_drug_cost', StringType(), True),
-        StructField('country_name', StringType(), False)
+        StructField('country_name', StringType(), False),
+        StructField('presc_fullname', StringType(), False)
     ])
     return schema_fact
 
