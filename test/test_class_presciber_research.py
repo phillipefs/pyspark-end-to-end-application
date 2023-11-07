@@ -1,9 +1,9 @@
 import sys
 import pytest
 from os.path import dirname, join, abspath
+from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType
+
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
-
-
 from utils.prescriber_reseach import PrescriberResearch
 import utils.get_all_variables as var_project
 
@@ -15,6 +15,36 @@ def prescriber_reseach_class():
         app_name='TestApp'
     )
     return spark
+
+@pytest.fixture
+def schema_city():
+    schema_city = StructType([
+        StructField('city', StringType(), True),
+        StructField('state_id', StringType(), True),
+        StructField('state_name', StringType(), True),
+        StructField('county_name', StringType(), True),
+        StructField('population', IntegerType(), True),
+        StructField('zips', StringType(), True)
+    ])
+    return schema_city
+
+@pytest.fixture
+def schema_fact():
+    schema_fact = StructType([
+        StructField('presc_id', StringType(), True),
+        StructField('presc_lname', StringType(), True),
+        StructField('presc_fname', StringType(), True),
+        StructField('presc_city', StringType(), True),
+        StructField('presc_state', StringType(), True),
+        StructField('presc_spclt', StringType(), True),
+        StructField('years_of_exp', StringType(), True),
+        StructField('drug_name', StringType(), True),
+        StructField('trx_cnt', StringType(), True),
+        StructField('total_day_supply', StringType(), True),
+        StructField('total_drug_cost', StringType(), True),
+        StructField('country_name', StringType(), False)
+    ])
+    return schema_fact
 
 @pytest.mark.parametrize('app_name, expected_master',[('TestApp', 'local')])
 
@@ -37,7 +67,7 @@ def test_validate_spark_session(prescriber_reseach_class):
     'file_dir, file_format, header, inferSchema',
     [
         (
-            "file:///" + var_project.staging_fact + '/' + 'USA_Presc_Medicare_Data_12021.csv',
+            "file:///" + var_project.staging_fact + '/' + 'USA_Presc_Medicare_Data.csv',
             'csv',
             var_project.header,
             var_project.infer_schema
@@ -61,3 +91,15 @@ def test_load_file_to_dataframe(prescriber_reseach_class, file_dir, file_format,
         inferSchema=inferSchema
     )
     assert df.count() > 0
+
+def test_data_clean(prescriber_reseach_class, schema_city, schema_fact):
+
+    pipeline = prescriber_reseach_class
+
+    df_city = pipeline.create_df_city()
+    df_fact = pipeline.create_df_fact()
+
+    df_city_clean, df_fact_clean = pipeline.data_clean(df_city, df_fact)
+
+    assert df_city_clean.schema == schema_city
+    assert df_fact_clean.schema == schema_fact
