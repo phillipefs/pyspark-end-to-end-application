@@ -154,10 +154,10 @@ class PrescriberResearch:
         try:
             logger.info("data_clean() is started for df_city dataframe...")
             df_city_clean = df_city.select(
-                upper(col("city").alias("city")),
+                upper(col("city")).alias("city"),
                 col("state_id"),
-                upper(col("state_name").alias("state_name")),
-                upper(col("county_name").alias("county_name")),
+                upper(col("state_name")).alias("state_name"),
+                upper(col("county_name")).alias("county_name"),
                 col("population"),
                 col("zips")
             )
@@ -178,10 +178,6 @@ class PrescriberResearch:
             )
      
             df_fact_clean = df_fact_clean.withColumn("country_name",lit("USA"))
-
-            print(df_city_clean.schema)
-            print(df_fact_clean.schema)
-
 
         except Exception as exp:
             logger.error("Error in the method - create_df_fact(). Please check the Stack Trace. " + str(exp))
@@ -207,9 +203,7 @@ class PrescriberResearch:
             df_fact = process.create_df_fact()
 
             #Clean Dataframes
-            df_city, df_fact = process.data_clean(df_city , df_fact)
-
-           
+            df_city, df_fact = process.data_clean(df_city , df_fact)           
 
             logging.info("start_pipeline() is Completed.")
 
