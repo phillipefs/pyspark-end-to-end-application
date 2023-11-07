@@ -150,7 +150,7 @@ class PrescriberResearch:
         logger.info(f"Dataframe Fact - CountRows: {df_fact.count()}")
         return df_fact
     
-    def data_clean(self, df_city: DataFrame, df_fact: DataFrame  = None)-> DataFrame:
+    def data_clean(self, df_city: DataFrame, df_fact: DataFrame)-> DataFrame:
         try:
             logger.info("data_clean() is started for df_city dataframe...")
             df_city_clean = df_city.select(
@@ -162,28 +162,27 @@ class PrescriberResearch:
                 col("zips")
             )
 
-            # logger.info("data_clean() is started for df_fact dataframe...")
-            # df_fact_clean = df_fact.select(
-            #     col("npi").alias("presc_id"),
-            #     col("nppes_provider_last_org_name").alias("presc_lname"),
-            #     col("nppes_provider_first_name").alias("presc_fname"),
-            #     col("nppes_provider_city").alias("presc_city"),
-            #     col("nppes_provider_state").alias("presc_state"),
-            #     col("specialty_description").alias("presc_spclt"),
-            #     col("years_of_exp"),
-            #     col("drug_name"),
-            #     col("total_claim_count").alias("trx_cnt"),
-            #     col("total_day_supply"),
-            #     col("total_drug_cost")
-            # )
+            logger.info("data_clean() is started for df_fact dataframe...")
+            df_fact_clean = df_fact.select(
+                col("nppes_provider_last_org_name").alias("presc_lname"),
+                col("nppes_provider_first_name").alias("presc_fname"),
+                col("nppes_provider_city").alias("presc_city"),
+                col("nppes_provider_state").alias("presc_state"),
+                col("specialty_description").alias("presc_spclt"),
+                col("years_of_exp"),
+                col("drug_name"),
+                col("total_claim_count").alias("trx_cnt"),
+                col("total_day_supply"),
+                col("total_drug_cost")
+            )
 
-            #df_fact_clean = df_fact_clean.withColumn("country_name",lit("USA"))
+            df_fact_clean = df_fact_clean.withColumn("country_name",lit("USA"))
 
         except Exception as exp:
             logger.error("Error in the method - create_df_fact(). Please check the Stack Trace. " + str(exp))
             raise
 
-        return df_city_clean, None   
+        return df_city_clean, df_fact_clean   
 
     def start_pipeline(self):
         try:
