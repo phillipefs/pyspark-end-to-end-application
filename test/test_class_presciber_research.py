@@ -100,7 +100,7 @@ def test_data_clean(prescriber_reseach_class, schema_city, schema_fact):
     df_fact = pipeline.create_df_fact()
 
     print("*********************************")
-    print(df_city.columns)
+    print(df_fact.columns)
     print("*********************************")
 
     df_city_clean, df_fact_clean = pipeline.data_clean(df_city, df_fact)
