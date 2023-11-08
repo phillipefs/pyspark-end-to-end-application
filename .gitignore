@@ -143,3 +143,7 @@ terraform.tfstate
 
 #Poetry
 poetry.lock
+
+#Airflow
+/airflow/airflow-scheduler.*
+/airflow/airflow-webserver.*
