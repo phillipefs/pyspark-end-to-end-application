@@ -1,31 +1,51 @@
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
-from airflow.utils.dates import days_ago
+from airflow.operators.bash import BashOperator
+from airflow.operators.empty import EmptyOperator
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+from airflow.sensors.web_hdfs_sensor import WebHdfsSensor
 
-# Define os argumentos padrão da DAG
+from datetime import datetime, timedelta
+
+
 default_args = {
     'owner': 'phillipefs',
-    'start_date': days_ago(1)
+    'start_date': datetime(2020, 11, 18),
 }
 
-# Crie uma instância da DAG
-dag = DAG(
-    'list_hdfs_directory',  # Nome da DAG
-    default_args=default_args,
-    schedule_interval=None,  # Defina o agendamento conforme necessário
-    catchup=False,  # Impede a execução de tarefas em atraso
-    tags=['PresciberResearch'],  # Tags para identificar a DAG
-)
+with DAG('pipeline_prescriber_research',
+         default_args=default_args,
+         schedule_interval=None,
+         catchup=False,  
+         tags=['Hadoop', 'Spark', 'ELT'], 
+) as dag:
+    
+    start_process = EmptyOperator(task_id="start_process")
+    end_process   = EmptyOperator(task_id="end_process")
+    
+    list_hdfs_task = BashOperator(
+        task_id='list_hdfs_directory',
+        bash_command='hdfs dfs -ls /',
+        dag=dag,
+    )
 
-# Defina a tarefa que executa o comando hdfs dfs -ls /
-list_hdfs_task = BashOperator(
-    task_id='list_hdfs_directory',
-    bash_command='hdfs dfs -ls /',  # Comando que será executado
+    pwd_task = BashOperator(
+        task_id='pwd_task',
+        bash_command='ls',
+        dag=dag,
+    )
+
+    spark_job_bash = BashOperator(
+    task_id='spark_job_bash',
+    bash_command='spark-submit --master local[*] --name arrow-spark /home/phillipefs/spark-applications/pyspark-end-to-end-application/app_pipeline_prescriber_research.py',
     dag=dag,
-)
+    )
 
-# Configura as dependências da tarefa
-list_hdfs_task
+    spark_task = SparkSubmitOperator(
+        task_id="spark_job_task",
+        conn_id= 'spark_cnn',
+        application= "/home/phillipefs/spark-applications/pyspark-end-to-end-application/app_pipeline_prescriber_research.py",
+        dag=dag,
+    )
 
-if __name__ == "__main__":
-    dag.cli()
+    # Configura as dependências da tarefa
+    start_process >> list_hdfs_task >> spark_job_bash>> spark_task >> end_process

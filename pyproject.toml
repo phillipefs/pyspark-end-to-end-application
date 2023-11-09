@@ -14,6 +14,9 @@ blue = "^0.9.1"
 isort = "^5.12.0"
 pyspark = "3.3.0"
 pytest-mock = "^3.12.0"
+hdfs = {extras = ["avro", "dataframe", "kerberos"], version = "^2.7.3"}
+apache-airflow-providers-apache-hdfs = "^4.2.0"
+apache-airflow-providers-apache-spark = {extras = ["cncf-kubernetes"], version = "^4.3.0"}
 
 [tool.poetry.group.dev.dependencies]
 aiohttp = {version = "3.8.4", allow-prereleases = true}
