@@ -152,3 +152,4 @@ poetry.lock
 /airflow/airflow-webserver-monitor.*
 /airflow/logs/*
 /airflow/logs/dag_processor_manager/dag_processor_manager.log
+/airflow/airflow.db
