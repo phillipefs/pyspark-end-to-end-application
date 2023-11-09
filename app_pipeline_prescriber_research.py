@@ -5,7 +5,7 @@ from  utils.prescriber_reseach import PrescriberResearch
 
 
 #Load the Logging Configuration File
-logging.config.fileConfig(fname= "configs/logging_to_file.conf")
+logging.config.fileConfig(fname= var_project.file_config_log)
 
 
 if __name__ == "__main__":

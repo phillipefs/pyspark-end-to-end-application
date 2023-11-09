@@ -13,7 +13,7 @@ import utils.get_all_variables as var_project
 from utils.udfs import column_split_cnt
 
 #Load the Logging Configuration File
-logging.config.fileConfig(fname= "configs/logging_to_file.conf")
+logging.config.fileConfig(fname= var_project.file_config_log)
 logger = logging.getLogger(__name__.split('.')[-1])
 
 
