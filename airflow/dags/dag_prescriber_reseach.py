@@ -28,11 +28,11 @@ with DAG('pipeline_prescriber_research',
         dag=dag,
     )
 
-    pwd_task = BashOperator(
-        task_id='pwd_task',
-        bash_command='ls',
-        dag=dag,
-    )
+    # pwd_task = BashOperator(
+    #     task_id='pwd_task',
+    #     bash_command='ls',
+    #     dag=dag,
+    # )
 
     spark_job_bash = BashOperator(
     task_id='spark_job_bash',
