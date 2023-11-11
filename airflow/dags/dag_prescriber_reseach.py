@@ -8,7 +8,7 @@ DIR_HDFS_FACT          = "hdfs dfs -mkdir -p /application/fact/"
 DIR_HDFS_DIMENSION     = "hdfs dfs -mkdir -p /application/dimension_city/"
 COPY_DIMENSION_TO_HDFS = "hdfs dfs -put -f /home/phillipefs/spark-applications/pyspark-end-to-end-application/staging/dimension_city/us_cities_dimension.parquet /application/dimension_city/"
 COPY_FACT_TO_HDFS      = "hdfs dfs -put -f /home/phillipefs/spark-applications/pyspark-end-to-end-application/staging/fact/USA_Presc_Medicare_Data.csv /application/fact/"
-SPARK_SUBMIT_PIPELINE  = "cd /home/phillipefs/spark-applications/pyspark-end-to-end-application/ && spark-submit --master local[*] /home/phillipefs/spark-applications/pyspark-end-to-end-application/app_pipeline_prescriber_research.py"
+SPARK_SUBMIT_PIPELINE  = "cd /home/phillipefs/spark-applications/pyspark-end-to-end-application/ && spark-submit --master yarn /home/phillipefs/spark-applications/pyspark-end-to-end-application/app_pipeline_prescriber_research.py"
 HIVE_COMMAND           = "cd /home/phillipefs/spark-applications/pyspark-end-to-end-application/hive/ && hive -f create_tables.sql"
 ########################################
 
