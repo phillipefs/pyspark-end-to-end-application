@@ -36,5 +36,9 @@
   <img src="img/dag.png" height="300" width="900">
 </div>
 
-### Files in HDFS
+### Files HDFS
 ![HDFS](img/hdfs.PNG)
+
+### Select External Tables HIVE
+![Alt text](img/hive_table_1.PNG)
+![Alt text](img/hive_table_2.PNG)
