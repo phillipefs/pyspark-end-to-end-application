@@ -33,5 +33,5 @@
 
 ### DAG Pipeline
 <div aling="center">
-  <img src="img/dag.png" height="400" width="900">
+  <img src="img/dag.png" height="300" width="900">
 </div>
