@@ -1,11 +1,16 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
-from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
-from airflow.sensors.web_hdfs_sensor import WebHdfsSensor
+from datetime import datetime
 
-from datetime import datetime, timedelta
-
+####### COMMANDS SPARK AND HDFS ########
+DIR_HDFS_FACT          = "hdfs dfs -mkdir -p /application/fact/"
+DIR_HDFS_DIMENSION     = "hdfs dfs -mkdir -p /application/dimension_city/"
+COPY_DIMENSION_TO_HDFS = "hdfs dfs -put -f /home/phillipefs/spark-applications/pyspark-end-to-end-application/staging/dimension_city/us_cities_dimension.parquet /application/dimension_city/"
+COPY_FACT_TO_HDFS      = "hdfs dfs -put -f /home/phillipefs/spark-applications/pyspark-end-to-end-application/staging/fact/USA_Presc_Medicare_Data.csv /application/fact/"
+SPARK_SUBMIT_PIPELINE  = "cd /home/phillipefs/spark-applications/pyspark-end-to-end-application/ && spark-submit --master local[*] /home/phillipefs/spark-applications/pyspark-end-to-end-application/app_pipeline_prescriber_research.py"
+HIVE_COMMAND           = "cd /home/phillipefs/spark-applications/pyspark-end-to-end-application/hive/ && hive -f create_tables.sql"
+########################################
 
 default_args = {
     'owner': 'phillipefs',
@@ -21,31 +26,42 @@ with DAG('pipeline_prescriber_research',
     
     start_process = EmptyOperator(task_id="start_process")
     end_process   = EmptyOperator(task_id="end_process")
-    
-    list_hdfs_task = BashOperator(
-        task_id='list_hdfs_directory',
-        bash_command='hdfs dfs -ls /',
+    load_files_hdfs   = EmptyOperator(task_id="load_files_hdfs")
+
+    create_dir_dimension_hdfs = BashOperator(
+        task_id= 'create_dir_dimension_hdfs',
+        bash_command= DIR_HDFS_DIMENSION,
         dag=dag,
     )
 
-    # pwd_task = BashOperator(
-    #     task_id='pwd_task',
-    #     bash_command='ls',
-    #     dag=dag,
-    # )
-
-    spark_job_bash = BashOperator(
-    task_id='spark_job_bash',
-    bash_command='spark-submit --master local[*] --name arrow-spark /home/phillipefs/spark-applications/pyspark-end-to-end-application/app_pipeline_prescriber_research.py',
-    dag=dag,
+    create_dir_fact_hdfs = BashOperator(
+        task_id= 'create_dir_fact_hdfs',
+        bash_command= DIR_HDFS_FACT,
+        dag=dag,
     )
 
-    spark_task = SparkSubmitOperator(
-        task_id="spark_job_task",
-        conn_id= 'spark_cnn',
-        application= "/home/phillipefs/spark-applications/pyspark-end-to-end-application/app_pipeline_prescriber_research.py",
-        dag=dag,
+    copy_dimension_to_hdfs = BashOperator(
+        task_id = "copy_dimension_to_hdfs",
+        bash_command= COPY_DIMENSION_TO_HDFS
+    )
+
+    copy_fact_to_hdfs = BashOperator(
+        task_id = "copy_fact_to_hdfs",
+        bash_command= COPY_FACT_TO_HDFS
+    )
+
+    spark_submit_pipeline = BashOperator(
+        task_id = "spark_submit_pipeline",
+        bash_command= SPARK_SUBMIT_PIPELINE
+    )
+
+    create_tables_hive = BashOperator(
+        task_id = "create_tables_hive",
+        bash_command= HIVE_COMMAND
     )
 
     # Configura as dependências da tarefa
-    start_process >> list_hdfs_task >> spark_job_bash>> spark_task >> end_process
+    start_process >> [create_dir_dimension_hdfs, create_dir_fact_hdfs]
+    [create_dir_dimension_hdfs, create_dir_fact_hdfs] >> load_files_hdfs
+    load_files_hdfs >> [copy_dimension_to_hdfs, copy_fact_to_hdfs] >> spark_submit_pipeline
+    spark_submit_pipeline >> create_tables_hive >> end_process
