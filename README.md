@@ -30,3 +30,8 @@
 4. Acess Airflow Local
    ```
    http://localhost:8080/home
+
+### DAG Pipeline
+<div aling="center">
+  <img src="img/dag.png" height="400" width="900">
+</div>
