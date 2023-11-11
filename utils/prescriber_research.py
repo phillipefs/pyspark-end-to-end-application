@@ -230,11 +230,8 @@ class PrescriberResearch:
         try:
             logging.info("Process save_reports_to_hdfs() is started...")
 
-            # df_city.write.format("parquet").mode("overwrite").saveAsTable("db_prescriber_research.city_report")
-            # df_fact.write.format("parquet").mode("overwrite").saveAsTable("db_prescriber_research.top_prescribes")
             df_city.coalesce(1).write.format("parquet").mode("overwrite").save("hdfs://localhost:9000/application/gold/city_report")
             df_fact.coalesce(1).write.format("parquet").mode("overwrite").save("hdfs://localhost:9000/application/gold/top_prescribes")
-            print(df_city.printSchema())
 
         except Exception as exp:
             logger.error("Error in the method - save_reports_to_hdfs(). Please check the Stack Trace. " + str(exp),exc_info=True)
@@ -264,8 +261,6 @@ class PrescriberResearch:
             df_city_report = process.city_report(df_city, df_fact)
             df_top5_prescribers = process.top_5_prescribers(df_fact)
             self.save_reports_to_hdfs(df_city_report, df_top5_prescribers)
-
-
 
         except Exception as error:
             logging.error("Error ocorred in the main() method." + str(error), exc_info=True)
