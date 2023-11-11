@@ -1,7 +1,7 @@
 
 import logging.config
 import utils.get_all_variables as var_project
-from  utils.prescriber_reseach import PrescriberResearch
+from  utils.prescriber_research import PrescriberResearch
 
 
 #Load the Logging Configuration File

@@ -1,9 +1,9 @@
-############################################################
-# Developed By: Phillipe Santos                            #
-# Developed Date: 10/11/23                                 # 
-# Script NAME: crearte_tables.sql                          #
-# PURPOSE: Create databases and external tables HIVE       #
-############################################################
+-- ############################################################
+-- # Developed By: Phillipe Santos                            #
+-- # Developed Date: 10/11/23                                 # 
+-- # Script NAME: crearte_tables.sql                          #
+-- # PURPOSE: Create databases and external tables HIVE       #
+-- ############################################################
 
 CREATE DATABASE IF NOT EXISTS db_prescribe_research;
 

@@ -4,7 +4,7 @@ from os.path import dirname, join, abspath
 from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DoubleType
 
 sys.path.insert(0, abspath(join(dirname(__file__), '..')))
-from utils.prescriber_reseach import PrescriberResearch
+from utils.prescriber_research import PrescriberResearch
 import utils.get_all_variables as var_project
 
 
