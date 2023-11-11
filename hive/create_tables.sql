@@ -1,7 +1,12 @@
--- Substitua 'seu_banco_de_dados' pelo nome desejado para o banco de dados
+############################################################
+# Developed By: Phillipe Santos                            #
+# Developed Date: 10/11/23                                 # 
+# Script NAME: crearte_tables.sql                          #
+# PURPOSE: Create databases and external tables HIVE       #
+############################################################
+
 CREATE DATABASE IF NOT EXISTS db_prescribe_research;
 
--- Use o banco de dados recém-criado
 USE db_prescribe_research;
 
 CREATE EXTERNAL TABLE top_prescribes (

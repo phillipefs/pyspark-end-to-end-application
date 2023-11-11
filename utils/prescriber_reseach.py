@@ -43,7 +43,7 @@ class PrescriberResearch:
             else:
                 master = 'yarn'
 
-            spark = SparkSession.builder.master(master).appName(self.app_name).getOrCreate()
+            spark = SparkSession.builder.master(master).appName(self.app_name).enableHiveSupport().getOrCreate()
         except NameError as exp:
             logger.error("NameError in the method - spark_session(). Please check the Stack Trace. " + str(exp), exc_info=True)
         except Exception as exp:
@@ -225,6 +225,23 @@ class PrescriberResearch:
         else:
             logger.info("Transform - top_5_Prescribers() is completed...")
         return df_presc_final
+    
+    def save_reports_to_hdfs(self, df_city, df_fact):
+        try:
+            logging.info("Process save_reports_to_hdfs() is started...")
+
+            # df_city.write.format("parquet").mode("overwrite").saveAsTable("db_prescriber_research.city_report")
+            # df_fact.write.format("parquet").mode("overwrite").saveAsTable("db_prescriber_research.top_prescribes")
+            df_city.coalesce(1).write.format("parquet").mode("overwrite").save("hdfs://localhost:9000/application/gold/city_report")
+            df_fact.coalesce(1).write.format("parquet").mode("overwrite").save("hdfs://localhost:9000/application/gold/top_prescribes")
+            print(df_city.printSchema())
+
+        except Exception as exp:
+            logger.error("Error in the method - save_reports_to_hdfs(). Please check the Stack Trace. " + str(exp),exc_info=True)
+            raise
+        else:
+            logger.info("save_reports_to_hdfs() is completed...")
+
 
     def start_pipeline(self):
         try:
@@ -238,7 +255,7 @@ class PrescriberResearch:
             df_city = process.create_df_city()
 
             #Load City File
-            df_fact = process.create_df_fact()            
+            df_fact = process.create_df_fact()
 
             #Clean Dataframes
             df_city, df_fact = process.data_clean(df_city , df_fact)
@@ -246,6 +263,8 @@ class PrescriberResearch:
             #Reports
             df_city_report = process.city_report(df_city, df_fact)
             df_top5_prescribers = process.top_5_prescribers(df_fact)
+            self.save_reports_to_hdfs(df_city_report, df_top5_prescribers)
+
 
 
         except Exception as error:
