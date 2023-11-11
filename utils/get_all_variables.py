@@ -1,7 +1,7 @@
 import os
 
 ## Set Environment Variables
-os.environ['envn']        = 'TEST'
+os.environ['envn']        = 'YARN'
 os.environ['header']      = 'True'
 os.environ['inferSchema'] = 'True'
 
