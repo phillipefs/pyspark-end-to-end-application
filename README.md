@@ -1,10 +1,10 @@
-# Architecture
+ # Architecture
 
 <div aling="center">
   <img src="img/architecture_black.png" height="300" width="900">
 </div>
 
-### Install Airflow Local
+### Install Airflow Local 
 1. Config Airflow Home
    ```
    export AIRFLOW_HOME=~/airflow
